@@ -16,17 +16,10 @@ from tabulate import tabulate
 dotenv.load_dotenv()
 
 
-STEAM_API_KEY = os.environ.get('STEAM_API_KEY')
-
 SERVER_KEYS = [
     'name',
     'players',
 ]
-
-
-class EnvironmentVariableNotFound(Exception):
-    pass
-
 
 class IPPort:
 
@@ -49,25 +42,40 @@ def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'ip_port',
-        metavar='ip:port',
+        metavar='IP:PORT',
         type=IPPort,
         help='Example: 85.190.157.113:10200')
+    parser.add_argument(
+        '--steam-api-key',
+        dest='steam_api_key',
+        metavar='KEY',
+        default='',
+    )
     return parser
 
 
-def check_steam_api_key():
-    if not STEAM_API_KEY:
-        raise EnvironmentVariableNotFound('STEAM_API_KEY')
+def get_steam_api_key(arg_key: str) -> str:
+    if arg_key:
+        return arg_key
+    env_key = os.environ.get('STEAM_API_KEY')
+    if env_key:
+        return env_key
+    print(
+        'Steam API key not found. '
+        'Please specify Steam API key as an environment variable (STEAM_API_KEY) '
+        'or as a CLI argument (--steam-api-key).'
+    )
+    sys.exit()
 
 
 def clear_screen():
     os.system('cls' if os.name =='nt' else 'clear')
 
 
-def check_server(ip_port: IPPort):
+def check_server(ip_port: IPPort, stream_api_key: str):
     url = (
         rf'https://api.steampowered.com/IGameServersService/GetServerList/v1/?'
-        rf'filter=\gamedir\dayz\gameaddr\{ip_port}&key={STEAM_API_KEY}'
+        rf'filter=\gamedir\dayz\gameaddr\{ip_port}&key={stream_api_key}'
     )
     while True:
         resp = requests.get(url)
@@ -93,11 +101,11 @@ def check_server(ip_port: IPPort):
 
 
 def main():
-    check_steam_api_key()
     parser = create_parser()
     args = parser.parse_args()
+    steam_api_key = get_steam_api_key(args.steam_api_key)
     try:
-        check_server(args.ip_port)
+        check_server(args.ip_port, steam_api_key)
     except KeyboardInterrupt:
         sys.exit()
 
