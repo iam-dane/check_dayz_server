@@ -46,6 +46,13 @@ def create_parser():
         type=IPPort,
         help='Example: 85.190.157.113:10200')
     parser.add_argument(
+        'interval',
+        metavar='SECONDS',
+        type=int,
+        default=10,
+        help='Time interval to check the server.'
+    )
+    parser.add_argument(
         '--steam-api-key',
         dest='steam_api_key',
         metavar='KEY',
@@ -91,7 +98,7 @@ def clear_screen():
     os.system('cls' if os.name =='nt' else 'clear')
 
 
-def check_server(ip_port: IPPort, stream_api_key: str, table_format: str):
+def check_server(ip_port: IPPort, interval: int, stream_api_key: str, table_format: str):
     url = (
         rf'https://api.steampowered.com/IGameServersService/GetServerList/v1/?'
         rf'filter=\gamedir\dayz\gameaddr\{ip_port}&key={stream_api_key}'
@@ -104,7 +111,7 @@ def check_server(ip_port: IPPort, stream_api_key: str, table_format: str):
                 table = [{key:server[key] for key in SERVER_KEYS } for server in servers]
                 clear_screen()
                 print(tabulate(table, headers='keys', tablefmt=table_format))
-                time.sleep(10)
+                time.sleep(interval)
             else:
                 clear_screen()
                 print(f'No servers found!')
@@ -124,7 +131,7 @@ def main():
     args = parser.parse_args()
     steam_api_key = get_steam_api_key(args.steam_api_key)
     try:
-        check_server(args.ip_port, steam_api_key, args.table_format)
+        check_server(args.ip_port, args.interval, steam_api_key, args.table_format)
     except KeyboardInterrupt:
         sys.exit()
 
