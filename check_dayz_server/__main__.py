@@ -51,6 +51,25 @@ def create_parser():
         metavar='KEY',
         default='',
     )
+    parser.add_argument(
+        '--table-format',
+        dest='table_format',
+        metavar='FORMAT',
+        default='simple',
+        choices=[
+            'plain',
+            'simple',
+            'github',
+            'grid',
+            'fancy_grid',
+            'pipe',
+            'orgtbl',
+            'presto',
+            'pretty',
+            'psql',
+            'rst',
+        ]
+    )
     return parser
 
 
@@ -72,7 +91,7 @@ def clear_screen():
     os.system('cls' if os.name =='nt' else 'clear')
 
 
-def check_server(ip_port: IPPort, stream_api_key: str):
+def check_server(ip_port: IPPort, stream_api_key: str, table_format: str):
     url = (
         rf'https://api.steampowered.com/IGameServersService/GetServerList/v1/?'
         rf'filter=\gamedir\dayz\gameaddr\{ip_port}&key={stream_api_key}'
@@ -84,7 +103,7 @@ def check_server(ip_port: IPPort, stream_api_key: str):
                 servers = resp.json()['response']['servers']
                 table = [{key:server[key] for key in SERVER_KEYS } for server in servers]
                 clear_screen()
-                print(tabulate(table, headers='keys', tablefmt='fancy_grid'))
+                print(tabulate(table, headers='keys', tablefmt=table_format))
                 time.sleep(10)
             else:
                 clear_screen()
@@ -105,7 +124,7 @@ def main():
     args = parser.parse_args()
     steam_api_key = get_steam_api_key(args.steam_api_key)
     try:
-        check_server(args.ip_port, steam_api_key)
+        check_server(args.ip_port, steam_api_key, args.table_format)
     except KeyboardInterrupt:
         sys.exit()
 
