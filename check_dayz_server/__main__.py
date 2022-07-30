@@ -46,7 +46,7 @@ def create_parser():
         type=IPPort,
         help='Example: 85.190.157.113:10200')
     parser.add_argument(
-        'interval',
+        '--interval',
         metavar='SECONDS',
         type=int,
         default=10,
