@@ -1,5 +1,7 @@
 .vscode/
 __pycache__/
+build/
+check_dayz_server.egg-info/
 **/__pychache__/
 .DS_Store
 *.pyc
