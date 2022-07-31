@@ -151,7 +151,7 @@ def query_server(ip_port: IPPort, query_port: int, show_duration: bool, interval
                 tables.append(table)
             clear_screen()
             for table in tables:
-                print(tabulate(table, headers="keys", tablefmt=table_format))
+                print(tabulate(table, headers='keys', tablefmt=table_format, numalign='left'))
                 print()
             time.sleep(interval)
         except TimeoutError:
