@@ -113,7 +113,7 @@ def create_server_table(resp) -> list:
     """Create server table."""
     return [{
         'Server Name': resp.server_name,
-        'Player Count': resp.player_count,
+        'Player Count': f'{resp.player_count}/{resp.max_players}',
         'Ping': f'{int(resp.ping * 1000)}ms'
     }]
 
@@ -144,14 +144,14 @@ def query_server(ip_port: IPPort, query_port: int, show_duration: bool, interval
             tables = []
             resp = a2s.info(query_addr)
             table = create_server_table(resp)
-            tables.append({'table': table, 'align': 'right'})
+            tables.append(table)
             if show_duration is True:
                 resp = a2s.players(query_addr)
                 table = create_player_table(resp)
-                tables.append({'table': table, 'align': 'left'})
+                tables.append(table)
             clear_screen()
             for table in tables:
-                print(tabulate(table['table'], headers="keys", tablefmt=table_format, numalign=table['align']))
+                print(tabulate(table, headers="keys", tablefmt=table_format))
                 print()
             time.sleep(interval)
         except TimeoutError:
