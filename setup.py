@@ -7,8 +7,9 @@ setuptools.setup(
     description='Check DayZ server player count.',
     packages=['check_dayz_server'],
     install_requires=[
-        'requests==2.28.1',
-        'python-dotenv==0.20.0'
+        'python-a2s==1.3.0',
+        'python-dotenv==0.20.0',
+        'requests==2.28.1'
     ],
     entry_points={
         'console_scripts': [(
