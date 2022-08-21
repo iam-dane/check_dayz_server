@@ -9,7 +9,8 @@ setuptools.setup(
     install_requires=[
         'python-a2s==1.3.0',
         'python-dotenv==0.20.0',
-        'requests==2.28.1'
+        'requests==2.28.1',
+        'tabulate==0.8.10'
     ],
     entry_points={
         'console_scripts': [(
